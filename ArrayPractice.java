@@ -16,7 +16,6 @@ public class ArrayPractice {
             }else{
                 //출차
                 sumTimeArray[number] += time - inTimeArray[number];
-                inTimeArray[number] = 0;
                 carIn[number] = false;
             }
         }
