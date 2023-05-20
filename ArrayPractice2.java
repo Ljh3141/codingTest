@@ -1,4 +1,74 @@
 import java.util.*;
+class ArrayPractice2 {
+    public int[] solution(int[] fees, String[] records) {
+        Map<Integer, Car> cars = new HashMap<>();
+        for(String data : records){
+            String[] datas = data.split(" ");
+            int carNum = Integer.parseInt(datas[1]);
+            if(!cars.containsKey(carNum)){
+                cars.put(carNum, new Car());//해당 번호의 차가 없으면 추가.
+            }
+            Car car = cars.get(carNum);
+            //입차이면 시간 등록
+            String[] time = datas[0].split(":");
+            if(datas[2].equals("IN")){
+                String[] times = datas[0].split(":");
+                car.park(Integer.parseInt(times[0])*60+Integer.parseInt(times[1]));
+            }
+            //출차는 시간 계산
+            else{
+                String[] times = datas[0].split(":");
+                car.calcTime(Integer.parseInt(times[0])*60+Integer.parseInt(times[1]));
+            }
+        }
+        for(int carNum : cars.keySet()){
+            Car car = cars.get(carNum);
+            if(car.parked){
+                //자정에도 주차중
+                car.calcTime(23*60+59);
+            }
+        }
+        Integer[] carNums = cars.keySet().toArray(new Integer[0]);
+        Arrays.sort(carNums);//차 번호 정렬
+        //요금 계산
+        int[] answer = new int[carNums.length];
+        for(int i = 0; i < carNums.length; i++){
+            answer[i] = calcFee(fees, cars.get(carNums[i]));
+        }
+               
+        return answer;
+    }
+    
+
+    class Car{
+        int time;
+        int inTime;
+        boolean parked;
+        Car(){
+            this.time = 0;
+        }
+        void calcTime(int t){
+            time += t-inTime;
+            parked = false;
+        }
+        
+        void park(int t){
+            inTime = t;
+            parked = true;
+        }
+    }
+    
+    static int calcFee(int[] fees, Car car){
+        //요금 계산
+        int time  = car.time;
+        if(time<=fees[0]) return fees[1];
+        else{
+            //기본요금+단위 요금*((시간-기본시간/단위 시간)의 올림)
+            return fees[1]+fees[3]*(int)Math.ceil((time-fees[0])/(float)fees[2]);
+        }
+    }
+}
+/*import java.util.*;
 
 class ArrayPractice2 {
         
@@ -85,3 +155,4 @@ class ArrayPractice2 {
         return result;
     }
 }
+*/
